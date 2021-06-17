@@ -1,3 +1,4 @@
+from enum import unique
 import socket
 import threading
 
@@ -29,9 +30,24 @@ class ArtNetSocket:
                     self.disconnect()
                     break
                 data, addr = self._socket.recvfrom(1024)
+
+                if(self.check_packet(data)):
+                    self.parse_packet(data)
+
         except socket.error:
             # reconnect socket
             self.disconnect()
             self._socket = self.connect()
         except Exception:
             pass
+
+    def check_packet(self, packet):
+        if(packet[:8] == b'Art-Net\x00' and int.from_bytes(packet[8:10], "little") == 0x5000):
+            return True
+        else:
+            return False
+
+    def parse_packet(self, packet):
+        universe = int.from_bytes(packet[14:16], "little")
+        channel_num = int.from_bytes(packet[16:18], "big")
+        channels = packet[18:18+channel_num]
