@@ -1,3 +1,5 @@
+from .src.ArtNetSocket import ArtNetSocket
+
 bl_info = {
     "name": "Blender Art-Net",
     "description": "A blender plugin for controling lights via the Art-Net protocol.",
@@ -7,8 +9,13 @@ bl_info = {
     "category": "Lighting",
 }
 
+socket = None
+
 def register():
-    print("Hello World")
+    global socket
+    socket = ArtNetSocket()
 
 def unregister():
-    print("Goodbye World")
+    global socket
+    socket.disconnect()
+    socket.shutdown()
