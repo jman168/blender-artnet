@@ -1,4 +1,5 @@
 from .src.ArtNetSocket import ArtNetSocket
+from .src.ChannelManager import ChannelManager
 
 bl_info = {
     "name": "Blender Art-Net",
@@ -10,10 +11,12 @@ bl_info = {
 }
 
 socket = None
+channel_manager = None
 
 def register():
     global socket
-    socket = ArtNetSocket()
+    channel_manager = ChannelManager()
+    socket = ArtNetSocket(channel_manager)
 
 def unregister():
     global socket
