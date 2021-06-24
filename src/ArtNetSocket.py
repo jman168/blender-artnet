@@ -9,6 +9,8 @@ class ArtNetSocket:
         self._channel_manager = channel_manager
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.bind((UDP_IP, UDP_PORT))
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(0.25)
         self._terminate_thread = False
 
         self._thread = threading.Thread(target=self.thread_task)
@@ -36,7 +38,7 @@ class ArtNetSocket:
                     if self._terminate_thread:
                         self.disconnect()
                         return
-                    data, addr = self._socket.recvfrom(1024)
+                    data = self._socket.recv(1024)
 
                     if(self.check_packet(data)):
                         self.parse_packet(data)
