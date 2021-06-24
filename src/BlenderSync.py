@@ -10,7 +10,14 @@ class BlenderSync:
     def _update_blender(self):
         channel_data = self._channel_manager.get_data()
 
-        if 0 in channel_data and len(channel_data[0])>=3:
-            for light in bpy.data.lights:
-                light.color = (channel_data[0][0]/255.0, channel_data[0][1]/255.0, channel_data[0][2]/255.0)
-        return 0.033333333
+        for light in bpy.data.lights:
+            if light.artnet_enabled:
+                if light.artnet_universe in channel_data:
+                    uni = light.artnet_universe
+                    if light.artnet_color_type == "dim":
+                        if light.artnet_master_dimmer_channel < len(channel_data[uni]):
+                            light.color = (channel_data[uni][light.artnet_master_dimmer_channel]/255.0, channel_data[uni][light.artnet_master_dimmer_channel]/255.0, channel_data[uni][light.artnet_master_dimmer_channel]/255.0)
+                    
+
+
+        return 0.02
